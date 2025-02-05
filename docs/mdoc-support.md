@@ -1,21 +1,22 @@
 ## Support of credential format mso_mdoc
 
-This document focuses on the steps involved for downloading and rendering a mdoc (credential format - mso_mdoc)
-
-### Communication sequence diagram
-
+This document provides a comprehensive overview of the process for downloading and rendering an mDoc, adhering to the OpenID4VCI specification. It details the necessary steps to retrieve, validate, and present credentials in the mso_mdoc format.
 ### Actors involved
 1. Inji Wallet
 2. Issuing authority
-3. [inji-vci-client](https://github.com/mosip/inji-vci-client) (Library for downloading credential)
-4. [vc-verifier](https://github.com/mosip/vc-verifier) (library for verification of downloaded VC)
-5. [pixelpass](https://github.com/mosip/pixelpass) (In case of mdoc, this library for converting base64 url encoded mdoc credential to JSON for rendering purpose)
+3. _inji-vci-client_ (Library for downloading credential)
+4. _vc-verifier_ (library for verification of downloaded VC)
+5. _pixelpass_ (In case of mdoc, this library for converting base64 url encoded mdoc credential to JSON for rendering purpose)
 
-![img_9.png](mdoc_sequence.png)
+###  Sequence diagram - download & view mso_mdoc credential format VC
+
+![mdoc_sequence.png](mdoc_sequence.png)
+
 #### Steps involved
 ##### 1. Make credential request
 
-Communicate with inji-vci-client to make the credential request to Issuing authority
+Establish communication with the _inji-vci-client_ to submit a credential request to the issuing authority.
+
 ````{
    "format": "mso_mdoc",
    "doctype": "org.iso.18013.5.1.mDL",
@@ -33,25 +34,36 @@ Communicate with inji-vci-client to make the credential request to Issuing autho
 }
 ````
 ##### 2. Receive the credential response
-inji-vci-client makes the credential request to issuing authority, once the response is received it returns back the response to the Wallet
+The _inji-vci-client_ submits the credential request to the issuing authority. Once the response is received, it is returned to the Wallet.
+
 ```{  
-	"credential": "<base-64-url>"  
+	"credential": "<base-64-url-encoded-cbor-data>"  
 }  
 ```
 ##### 3. Perform vc verification
 
-After receiving the credential from the issuing authority via inji-vci-client library, checking is done reg the VC issued by the issuer has not been changed. For mso_mdoc format VC following checks are performed using vc-verifier library
+After obtaining the credential from the issuing authority through the _inji-vci-client_ library, a verification process ensures that the issued Verifiable Credential (VC) remains unaltered. For credentials in the mso_mdoc format, the following validations are performed using the _vc-verifier_ library:
 
-        * DS (Document Signer) certification validation (certificate chain validation) [As of now this validation is not performed]
-        * Cryptographic signature / hash check
-        * issuing_country check
-        * docType check
-        * validity information check
+1. [x] Verifies the integrity of the certificate chain to ensure that the credential is issued by a legitimate and authorized issuer. (Document Signer certification validation) [currently not implemented]
+2. [x] Confirm the credential has not been tampered with. (Cryptographic Signature/Hash Verification)
+3. [x] Issuing Country Validation.
+4. [x] Document Type Check.
+5. [x] Confirms the credential is within its valid usage period. (Validity Information Check)
+
 ##### 4. Rendering of mso_mdoc VC
 
-- In case of mso_mdoc format VC, issuer provides the credential in base 64 encoded CBOR data. Wallet will be communicating with module pixelpass library to convert base 64 encoded CBOR to JSON data, this processed credential will be used for rendering purpose. 
-- This processed credential will be ignored while storing the VC data into storage / sharing via bluetooth to avoid bigger data storage / transmission respectively and will be kept only in state machine context, which avoids communication with pixelpass every time for rendering.
-- Post getting the processed VC, the wellknown of the issuer is then used for rendering the labels of the VC and ordering of the fields.
-  - Detail view of VC
-    - field label -> displaying field name should be from Credential Issuer (Issuing Authority) metadata claims' display attribute ([Reference](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html#name-credential-issuer-metadata-5))
-    - Order of fields -> As per [openID4VCI draft 13](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html), we can use order property in wellknown, which is an array of claims.display.name values that lists them in the order they should be displayed by the Wallet. eg - org.iso.18013.5.1\~given_name [format - {namespace}~{claim-value-name}]
+- In the case of an mso_mdoc format Verifiable Credential (VC), the issuer provides the credential as Base64-encoded CBOR data. The Wallet interacts with the _pixelpass_ library to convert this encoded CBOR data into JSON format, which is then used for rendering the credential.
+- The processed credential is not stored in persistent storage or shared via Bluetooth to optimize storage efficiency and transmission size. Instead, it is maintained only within the state machine context, ensuring that repeated interactions with PixelPass are avoided for rendering.
+- Once the processed VC is obtained, the issuer's well-known configuration is used to determine how the credential should be displayed, including labeling and field ordering.
+
+- #####  VC Detail View Rendering:
+  - Field Labels:
+  The labels displayed for each field are derived from the Credential Issuer's metadata claims under the display attribute.
+  Reference: OpenID4VCI Spec - Credential Issuer Metadata. 
+  - Field Ordering:
+    - As per OpenID4VCI Draft 13, the order property in the issuer’s well-known configuration defines the order of fields to be displayed.
+    This property contains an array of claims.display.name values, specifying the sequence in which the Wallet should present the fields. 
+    -   Example:
+       ` org.iso.18013.5.1\~given_name` (` Format: {namespace}\~{claim-value-name}`)
+
+This structured approach ensures that the credential is rendered accurately and efficiently while maintaining a lightweight storage and transmission footprint.
