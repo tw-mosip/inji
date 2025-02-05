@@ -1,6 +1,6 @@
 ## Support of credential format mso_mdoc
 
-This document focuses on the steps involved for downloading and rendering an mdoc (credential format - mso_mdoc)
+This document focuses on the steps involved for downloading and rendering a mdoc (credential format - mso_mdoc)
 
 ### Communication sequence diagram
 
@@ -40,7 +40,7 @@ inji-vci-client makes the credential request to issuing authority, once the resp
 ```
 ##### 3. Perform vc verification
 
-After receiving the credential from the issuing authority via inji-vci-clietn library, checking is done reg the VC issued by the issuer has not been changed. For mso_mdoc format VC following checks are performed using vc-verifier library
+After receiving the credential from the issuing authority via inji-vci-client library, checking is done reg the VC issued by the issuer has not been changed. For mso_mdoc format VC following checks are performed using vc-verifier library
 
         * DS (Document Signer) certification validation (certificate chain validation) [As of now this validation is not performed]
         * Cryptographic signature / hash check
@@ -53,5 +53,5 @@ After receiving the credential from the issuing authority via inji-vci-clietn li
 - This processed credential will be ignored while storing the VC data into storage / sharing via bluetooth to avoid bigger data storage / transmission respectively and will be kept only in state machine context, which avoids communication with pixelpass every time for rendering.
 - Post getting the processed VC, the wellknown of the issuer is then used for rendering the labels of the VC and ordering of the fields.
   - Detail view of VC
-    - field label -> displaying field name should be from Credential Issuer metadata claims’s display attribute ([Reference](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html#name-credential-issuer-metadata-5))
+    - field label -> displaying field name should be from Credential Issuer (Issuing Authority) metadata claims' display attribute ([Reference](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html#name-credential-issuer-metadata-5))
     - Order of fields -> As per [openID4VCI draft 13](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-ID1.html), we can use order property in wellknown, which is an array of claims.display.name values that lists them in the order they should be displayed by the Wallet. eg - org.iso.18013.5.1\~given_name [format - {namespace}~{claim-value-name}]
