@@ -44,11 +44,11 @@ The _inji-vci-client_ submits the credential request to the issuing authority. O
 
 After obtaining the credential from the issuing authority through the _inji-vci-client_ library, a verification process ensures that the issued Verifiable Credential (VC) remains unaltered. For credentials in the mso_mdoc format, the following validations are performed using the _vc-verifier_ library:
 
-1. [x] Verifies the integrity of the certificate chain to ensure that the credential is issued by a legitimate and authorized issuer. (Document Signer certification validation) [currently not implemented]
-2. [x] Confirm the credential has not been tampered with. (Cryptographic Signature/Hash Verification)
-3. [x] Issuing Country Validation.
-4. [x] Document Type Check.
-5. [x] Confirms the credential is within its valid usage period. (Validity Information Check)
+1. [x] Confirm the credential has not been tampered with. (Cryptographic Signature/Hash Verification)
+2. [x] Issuing Country Validation.
+3. [x] Document Type Check.
+4. [x] Confirms the credential is within its valid usage period. (Validity Information Check)
+5. [x] Verifies the integrity of the certificate chain to ensure that the credential is issued by a legitimate and authorized issuer. (Document Signer certification validation) [currently not implemented]
 
 ##### 4. Rendering of mso_mdoc VC
 
