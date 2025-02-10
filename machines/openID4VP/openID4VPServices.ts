@@ -45,7 +45,7 @@ export const openID4VPServices = () => {
         context.selectedVCs,
       );
 
-      let vpResponseMetadata: Record<string, any> = {}
+      let vpResponsesMetadata: Record<string, any> = {}
 
       for (const formatType in vpToken){
         if(formatType === VCFormat.ldp_vc){
@@ -56,7 +56,7 @@ export const openID4VPServices = () => {
               context.keyType,
           );
 
-          vpResponseMetadata[formatType] = {
+          vpResponsesMetadata[formatType] = {
             jws: proofJWT,
             signatureAlgorithm: OpenID4VP_Proof_Sign_Algo_Suite,
             publicKey: base64url(context.publicKey),
@@ -65,7 +65,7 @@ export const openID4VPServices = () => {
         }
       }
 
-      return await OpenID4VP.shareVerifiablePresentation(vpResponseMetadata);
+      return await OpenID4VP.shareVerifiablePresentation(vpResponsesMetadata);
     },
   };
 };
