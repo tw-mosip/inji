@@ -53,7 +53,8 @@ export const VCCardViewContent: React.FC<VCItemContentProps> = props => {
       />
     ));
   const issuerLogo = props.verifiableCredentialData.issuerLogo;
-  const faceImage = props.verifiableCredentialData.face;
+  const faceImage =
+    'data:image/png;base64,' + props.verifiableCredentialData.face;
   const {start} = useCopilot();
   const {t} = useTranslation();
 

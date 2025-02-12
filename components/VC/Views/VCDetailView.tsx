@@ -26,6 +26,7 @@ import {VCItemField} from '../common/VCItemField';
 
 const getProfileImage = (face: any) => {
   if (face) {
+    face = 'data:image/png;base64,' + face;
     return (
       <Image source={{uri: face}} style={Theme.Styles.detailedViewImage} />
     );
